@@ -54,13 +54,18 @@ const App = () => {
     }));
   };
 
+  const rotateTetromino90 = (shape) => {
+    // Calculate the transpose of the matrix (swap rows and columns)
+    const transposedShape = shape[0].map((_, index) => shape.map(row => row[index]));
+    // Reverse the order of the rows to get the 90-degree rotated shape
+    const rotatedShape = transposedShape.map(row => row.reverse());
+    return rotatedShape;
+  };
+
   const rotateTetromino = () => {
-    const rotatedShape = tetromino.shape[0].map((_, index) =>
-      tetromino.shape.map(row => row[index]).reverse()
-    );
     setTetromino(prev => ({
       ...prev,
-      shape: rotatedShape
+      shape: rotateTetromino90(prev.shape)
     }));
   };
 
