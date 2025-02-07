@@ -16,5 +16,5 @@
 }
 
 .cell.filled {
-  background-color: blue;
+  background-color: blue; /* You can change this color based on the tetromino */
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import './Board.css'; // Optional: For styling the board
+import './Board.css';
 
 const Board = ({ board }) => {
   return (
