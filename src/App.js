@@ -27,6 +27,7 @@ const App = () => {
   const [board, setBoard] = useState(createEmptyBoard(20, 10));
   const [tetromino, setTetromino] = useState(randomTetromino());
   const [position, setPosition] = useState({ x: 3, y: 0 });
+  const [dropTime, setDropTime] = useState(null); // Added state for managing drop time
 
   const mergeTetrominoWithBoard = (board, tetromino, position) => {
     const newBoard = board.map(row => row.slice());
@@ -55,9 +56,7 @@ const App = () => {
   };
 
   const rotateTetromino90 = (shape) => {
-    // Calculate the transpose of the matrix (swap rows and columns)
     const transposedShape = shape[0].map((_, index) => shape.map(row => row[index]));
-    // Reverse the order of the rows to get the 90-degree rotated shape
     const rotatedShape = transposedShape.map(row => row.reverse());
     return rotatedShape;
   };
@@ -80,6 +79,38 @@ const App = () => {
       rotateTetromino();
     }
   };
+
+  const checkCollision = (board, tetromino, position) => {
+    for (let y = 0; y < tetromino.shape.length; y++) {
+      for (let x = 0; x < tetromino.shape[y].length; x++) {
+        if (
+          tetromino.shape[y][x] !== 0 &&
+          (board[y + position.y] && board[y + position.y][x + position.x]) !== 0
+        ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  const resetTetromino = () => {
+    setTetromino(randomTetromino());
+    setPosition({ x: 3, y: 0 });
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!checkCollision(board, tetromino, { x: position.x, y: position.y + 1 })) {
+        dropTetromino();
+      } else {
+        setBoard(prevBoard => mergeTetrominoWithBoard(prevBoard, tetromino, position));
+        resetTetromino();
+      }
+    }, 1000); // Added setInterval to update the position periodically
+
+    return () => clearInterval(interval);
+  }, [position, tetromino]);
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress);
